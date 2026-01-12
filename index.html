@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TREBPARTY 🍻🎉 — Registrazione</title>
+  <link rel="stylesheet" href="styles.css" />
+  <meta name="description" content="Registrati al TREBPARTY 🍻🎉 — Farewell party di Trebberto (Umberto Chiapasco)." />
+</head>
+<body>
+  <main class="wrap">
+    <header class="card hero">
+      <div class="badge">TREBPARTY 🍻🎉</div>
+      <h1>Farewell party di <span class="accent">Trebberto</span></h1>
+      <p class="sub">
+        Partecipa al farewell party del nostro caro Trebberto <span class="muted">@ Umberto Chiapasco</span>
+      </p>
+      <div class="details">
+        <div class="detail"><span class="k">📅</span><span><strong>Martedì 13 Gennaio 2025</strong></span></div>
+        <div class="detail"><span class="k">📍</span><span><strong>Jumping Jester</strong></span></div>
+        <div class="detail"><span class="k">🕒</span><span><strong>Orario:</strong> ancora da definire</span></div>
+        <div class="detail"><span class="k">🍺</span><span><strong>1 birra gratis</strong> a chiunque partecipi</span></div>
+      </div>
+    </header>
+
+    <section class="card">
+      <h2>Registrazione partecipanti</h2>
+      <p class="muted small">Compila il form: il tuo nome verrà registrato nell’elenco dei partecipanti.</p>
+
+      <form id="regForm" class="form">
+        <label>
+          Nome e Cognome
+          <input name="name" type="text" placeholder="Es. Giancarlo Del Mundo" required maxlength="80" />
+        </label>
+
+        <label>
+          Instagram (opzionale)
+          <input name="instagram" type="text" placeholder="Es. @dgianco_" maxlength="80" />
+        </label>
+
+        <label>
+          Numero persone (te incluso)
+          <select name="count" required>
+            <option value="1" selected>1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </label>
+
+        <label class="checkbox">
+          <input name="beer" type="checkbox" checked />
+          Confermo che voglio la birra 🍻 (se disponibile)
+        </label>
+
+        <button type="submit" id="submitBtn">Registrami</button>
+
+        <div id="msg" class="msg" role="status" aria-live="polite"></div>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Info rapide</h2>
+      <ul class="list">
+        <li>Se l’orario cambia, aggiorna questa pagina e rigenera il QR.</li>
+        <li>Se vuoi impedire doppie registrazioni, puoi farlo nel Google Sheet (colonne + filtri).</li>
+      </ul>
+    </section>
+
+    <footer class="foot">
+      <span class="muted small">Creato per TREBPARTY 🍻🎉</span>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
