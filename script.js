@@ -39,7 +39,6 @@ form.addEventListener("submit", async (e) => {
       body: JSON.stringify(payload)
     });
 
-   // Se la risposta è "opaque/redirect", status può essere 0 ma il dato è stato scritto lo stesso
 if (res.status === 0) {
   form.reset();
   form.querySelector('input[name="beer"]').checked = true;
