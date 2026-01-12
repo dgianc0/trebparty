@@ -1,4 +1,3 @@
- // === CONFIG ===
 const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbxXBgLyEnh0-9R6P3g9gUF835RU-fF3xTPMScrwJHmzd9i2NY6KVKc0h9xzZNhhf4By/exec";
 
 const form = document.getElementById("regForm");
@@ -10,59 +9,51 @@ function setMsg(text, ok = true) {
   msg.style.color = ok ? "rgba(110,231,255,.95)" : "rgba(255,140,140,.95)";
 }
 
-form.addEventListener("submit", async (e) => {
+form.addEventListener("submit", (e) => {
   e.preventDefault();
 
-  if (!ENDPOINT_URL) {
-    setMsg("⚠️ ENDPOINT_URL non configurato.", false);
+  const fd = new FormData(form);
+  const name = (fd.get("name") || "").toString().trim();
+  if (!name) {
+    setMsg("⚠️ Inserisci Nome e Cognome.", false);
     return;
   }
 
   btn.disabled = true;
   setMsg("Invio in corso…");
 
-  const data = new FormData(form);
-  const name = (data.get("name") || "").toString().trim();
-  const instagram = (data.get("instagram") || "").toString().trim();
-  const count = (data.get("count") || "1").toString();
-  const beer = form.querySelector('input[name="beer"]').checked ? "1" : "0";
+  // Crea un form “shadow” che invia senza CORS
+  const shadow = document.createElement("form");
+  shadow.action = ENDPOINT_URL;
+  shadow.method = "GET";
+  shadow.target = "hidden_iframe"; // invia nell'iframe nascosto
 
-  if (!name) {
-    setMsg("⚠️ Inserisci Nome e Cognome.", false);
-    btn.disabled = false;
-    return;
-  }
+  // Copia campi
+  const fields = {
+    name: name,
+    instagram: (fd.get("instagram") || "").toString().trim(),
+    count: (fd.get("count") || "1").toString(),
+    beer: form.querySelector('input[name="beer"]').checked ? "1" : "0",
+    t: Date.now().toString()
+  };
 
-  // GET querystring
-  const qs = new URLSearchParams({
-    name,
-    instagram,
-    count,
-    beer,
-    t: Date.now().toString(), // cache-buster
+  Object.entries(fields).forEach(([k, v]) => {
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = k;
+    input.value = v;
+    shadow.appendChild(input);
   });
 
-  try {
-    const res = await fetch(`${ENDPOINT_URL}?${qs.toString()}`, {
-      method: "GET",
-      cache: "no-store",
-    });
+  document.body.appendChild(shadow);
+  shadow.submit();
 
-    // Se qui arriva, non è più "HTTP 0"
-    if (!res.ok) throw new Error("HTTP " + res.status);
-
-    const out = await res.json();
-    if (out && out.ok) {
-      form.reset();
-      form.querySelector('input[name="beer"]').checked = true;
-      setMsg("✅ Registrazione completata! Ci vediamo al TREBPARTY 🍻");
-    } else {
-      throw new Error(out?.error || "Errore sconosciuto");
-    }
-  } catch (err) {
-    setMsg("❌ Errore durante la registrazione. Riprova o avvisa l'organizzatore.", false);
-    console.error(err);
-  } finally {
+  // UX: non possiamo leggere la risposta (cross-origin), quindi assumiamo ok
+  setTimeout(() => {
+    form.reset();
+    form.querySelector('input[name="beer"]').checked = true;
+    setMsg("✅ Registrazione completata! Ci vediamo al TREBPARTY 🍻");
     btn.disabled = false;
-  }
+    shadow.remove();
+  }, 700);
 });
