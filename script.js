@@ -39,9 +39,24 @@ form.addEventListener("submit", async (e) => {
       body: JSON.stringify(payload)
     });
 
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    const out = await res.json();
+   // Se la risposta è "opaque/redirect", status può essere 0 ma il dato è stato scritto lo stesso
+if (res.status === 0) {
+  form.reset();
+  form.querySelector('input[name="beer"]').checked = true;
+  setMsg("✅ Registrazione completata! Ci vediamo al TREBPARTY 🍻");
+  return;
+}
 
+if (!res.ok) throw new Error("HTTP " + res.status);
+
+const out = await res.json();
+if (out && out.ok) {
+  form.reset();
+  form.querySelector('input[name="beer"]').checked = true;
+  setMsg("✅ Registrazione completata! Ci vediamo al TREBPARTY 🍻");
+} else {
+  throw new Error((out && out.error) ? out.error : "Errore sconosciuto");
+}
     if (out && out.ok){
       form.reset();
       // keep beer checked by default
