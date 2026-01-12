@@ -1,12 +1,11 @@
-// === CONFIG ===
-// 1) Pubblica un Google Apps Script come Web App e incolla qui l'URL:
-const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbx6DMM_uUvYDWzQuvSYcej8ik1BQbvf_4OMHY774FiAnld_Gzkg_iPxemSZVzyfOXvQ/exec";
+ // === CONFIG ===
+const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbwDU-hBQaxLwR7TTLC8gWeeJt6gT6-2jkZa0EaGIg6WMNox8qYBUNjAPgnJ40VU5qAL/exec";
 
 const form = document.getElementById("regForm");
 const msg = document.getElementById("msg");
 const btn = document.getElementById("submitBtn");
 
-function setMsg(text, ok=true){
+function setMsg(text, ok = true) {
   msg.textContent = text;
   msg.style.color = ok ? "rgba(110,231,255,.95)" : "rgba(255,140,140,.95)";
 }
@@ -14,8 +13,8 @@ function setMsg(text, ok=true){
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  if (!ENDPOINT_URL || ENDPOINT_URL.includes("PASTE_YOUR")){
-    setMsg("⚠️ Prima devi configurare ENDPOINT_URL (Google Apps Script). Vedi README.", false);
+  if (!ENDPOINT_URL) {
+    setMsg("⚠️ ENDPOINT_URL non configurato.", false);
     return;
   }
 
@@ -23,51 +22,47 @@ form.addEventListener("submit", async (e) => {
   setMsg("Invio in corso…");
 
   const data = new FormData(form);
-  const payload = {
-    name: (data.get("name") || "").toString().trim(),
-    instagram: (data.get("instagram") || "").toString().trim(),
-    count: (data.get("count") || "1").toString(),
-    beer: !!data.get("beer"),
-    timestamp: new Date().toISOString()
-  };
+  const name = (data.get("name") || "").toString().trim();
+  const instagram = (data.get("instagram") || "").toString().trim();
+  const count = (data.get("count") || "1").toString();
+  const beer = form.querySelector('input[name="beer"]').checked ? "1" : "0";
 
-  try{
-    const res = await fetch(ENDPOINT_URL, {
-      method: "POST",
-      mode: "no-cors",
-      headers: {"Content-Type":"text/plain;charset=utf-8"},
-      body: JSON.stringify(payload)
+  if (!name) {
+    setMsg("⚠️ Inserisci Nome e Cognome.", false);
+    btn.disabled = false;
+    return;
+  }
+
+  // GET querystring
+  const qs = new URLSearchParams({
+    name,
+    instagram,
+    count,
+    beer,
+    t: Date.now().toString(), // cache-buster
+  });
+
+  try {
+    const res = await fetch(`${ENDPOINT_URL}?${qs.toString()}`, {
+      method: "GET",
+      cache: "no-store",
     });
 
-if (res.status === 0) {
-  form.reset();
-  form.querySelector('input[name="beer"]').checked = true;
-  setMsg("✅ Registrazione completata! Ci vediamo al TREBPARTY 🍻");
-  return;
-}
+    // Se qui arriva, non è più "HTTP 0"
+    if (!res.ok) throw new Error("HTTP " + res.status);
 
-if (!res.ok) throw new Error("HTTP " + res.status);
-
-const out = await res.json();
-if (out && out.ok) {
-  form.reset();
-  form.querySelector('input[name="beer"]').checked = true;
-  setMsg("✅ Registrazione completata! Ci vediamo al TREBPARTY 🍻");
-} else {
-  throw new Error((out && out.error) ? out.error : "Errore sconosciuto");
-}
-    if (out && out.ok){
+    const out = await res.json();
+    if (out && out.ok) {
       form.reset();
-      // keep beer checked by default
       form.querySelector('input[name="beer"]').checked = true;
       setMsg("✅ Registrazione completata! Ci vediamo al TREBPARTY 🍻");
     } else {
-      throw new Error((out && out.error) ? out.error : "Errore sconosciuto");
+      throw new Error(out?.error || "Errore sconosciuto");
     }
-  }catch(err){
+  } catch (err) {
     setMsg("❌ Errore durante la registrazione. Riprova o avvisa l'organizzatore.", false);
     console.error(err);
-  }finally{
+  } finally {
     btn.disabled = false;
   }
 });
