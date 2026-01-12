@@ -1,6 +1,6 @@
 // === CONFIG ===
 // 1) Pubblica un Google Apps Script come Web App e incolla qui l'URL:
-const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbwDU-hBQaxLwR7TTLC8gWeeJt6gT6-2jkZa0EaGIg6WMNox8qYBUNjAPgnJ40VU5qAL/exec";
+const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbx6DMM_uUvYDWzQuvSYcej8ik1BQbvf_4OMHY774FiAnld_Gzkg_iPxemSZVzyfOXvQ/exec";
 
 const form = document.getElementById("regForm");
 const msg = document.getElementById("msg");
