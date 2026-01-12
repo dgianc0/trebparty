@@ -1,5 +1,5 @@
  // === CONFIG ===
-const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbwDU-hBQaxLwR7TTLC8gWeeJt6gT6-2jkZa0EaGIg6WMNox8qYBUNjAPgnJ40VU5qAL/exec";
+const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbxXBgLyEnh0-9R6P3g9gUF835RU-fF3xTPMScrwJHmzd9i2NY6KVKc0h9xzZNhhf4By/exec";
 
 const form = document.getElementById("regForm");
 const msg = document.getElementById("msg");
